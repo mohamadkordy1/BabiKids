@@ -7,6 +7,10 @@ use App\Http\Controllers\API\ActivityController;
 use App\Http\Controllers\API\AttendanceController;
 use App\Http\Controllers\API\childrenController;
 use App\Http\Controllers\API\PaymentController;
+use App\Http\Controllers\API\ProgressController;
+use App\Http\Controllers\API\ReportController;
+use App\Http\Controllers\API\StaffController;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -39,3 +43,22 @@ route::get('/Payment/{id}',[PaymentController::class, 'show']);
 route::post('/Payment',[PaymentController::class, 'store']);
 route::put('/Payment/{id}',[PaymentController::class, 'update']);
 route::delete('/Payment/{id}',[PaymentController::class, 'destroy']);
+
+route::get('/Progress',[ProgressController::class, 'index']);
+route::get('/Progress/{id}',[ProgressController::class, 'show']);
+route::post('/Progress',[ProgressController::class, 'store']);
+route::put('/Progress/{id}',[ProgressController::class, 'update']);
+route::delete('/Progress/{id}',[ProgressController::class, 'destroy']);
+
+route::get('/Report',[ReportController::class, 'index']);
+route::get('/Report/{id}',[ReportController::class, 'show']);
+route::post('/Report',[ReportController::class, 'store']);
+route::put('/Report/{id}',[ReportController::class, 'update']);
+route::delete('/Report/{id}',[ReportController::class, 'destroy']);
+
+route::get('/Staff',[StaffController::class, 'index']);
+route::get('/Staff/{id}',[StaffController::class, 'show']);
+route::post('/Staff',[StaffController::class, 'store']);
+route::put('/Staff/{id}',[StaffController::class, 'update']);
+route::delete('/Staff/{id}',[StaffController::class, 'destroy']);
+
