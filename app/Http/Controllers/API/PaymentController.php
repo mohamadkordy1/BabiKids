@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Payment; // Assuming you have a Payment model
+use App\Http\Resources\PaymentResource;
 
 class PaymentController extends Controller
 {
@@ -19,7 +20,7 @@ class PaymentController extends Controller
          $payments = Payment::all();
 
         // Return the payments as a JSON response
-        return response()->json($payments);
+        return PaymentResource::collection($payments);
 
 
     }
@@ -53,7 +54,10 @@ class PaymentController extends Controller
         $payment = Payment::create($data);
 
         // Return a response
-        return response()->json(['message' => 'Payment recorded successfully', 'payment' => $payment], 201);
+     return (new PaymentResource($payment))
+            ->additional(['message' => 'Child created successfully'])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -67,7 +71,7 @@ class PaymentController extends Controller
         }
 
         // Return the payment as a JSON response
-        return response()->json($payment);
+          return new PaymentResource($payment);
     }
 
     /**
@@ -103,7 +107,8 @@ class PaymentController extends Controller
         $payment->update($data);
 
         // Return a response
-        return response()->json(['message' => 'Payment updated successfully', 'payment' => $payment]);
+         return (new PaymentResource($payment))
+            ->additional(['message' => 'Activity updated successfully']);     
     }
 
     /**

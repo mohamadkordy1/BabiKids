@@ -5,8 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Child; // Assuming you have a Child model
+use App\Http\Resources\ChildResource; // Assuming you have a ChildResource for formatting responses
 
-class childrenController extends Controller
+class ChildrenController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +18,8 @@ class childrenController extends Controller
         // This method should return a list of children
         // Assuming you have a Child model
         $children = Child::all();
-
         // Return the children as a JSON response
-        return response()->json($children);
+        return ChildResource::collection($children);
     }
 
     /**
@@ -42,12 +42,18 @@ class childrenController extends Controller
             'gender' => 'required',
             'parent_id' => 'required|exists:users,id', // Assuming you have a Parent model
         ]);
+        
 
         // Create a new child record
         $child = Child::create($data);
 
         // Return a response
-        return response()->json(['message' => 'Child created successfully', 'child' => $child], 201);
+        return (new ChildResource($child))
+            ->additional(['message' => 'Child created successfully'])
+            ->response()
+            ->setStatusCode(201);
+    
+    
     }
 
     /**
@@ -61,7 +67,7 @@ class childrenController extends Controller
         }
 
         // Return the child as a JSON response
-        return response()->json($child);
+        return new ChildResource($child);
     }
 
     /**
@@ -94,7 +100,8 @@ class childrenController extends Controller
         $child->update($data);
 
         // Return a response
-        return response()->json(['message' => 'Child updated successfully', 'child' => $child]);
+        return (new ChildResource($child))
+            ->additional(['message' => 'Child updated successfully']);
     }
 
     /**

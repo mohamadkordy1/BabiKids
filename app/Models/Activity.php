@@ -10,7 +10,7 @@ class Activity extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'description', 'child_id', 'created_by'
+        'title', 'description', 'child_id', 'created_by','created_at'
     ];
 
     public function child()

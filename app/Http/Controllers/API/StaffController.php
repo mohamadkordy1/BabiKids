@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Staff; // Assuming you have a Staff model
 use App\Models\User; // Assuming you have a User model
+use App\Http\Resources\StaffResource;
 class StaffController extends Controller
 {
     /**
@@ -17,7 +18,7 @@ class StaffController extends Controller
         $staff = Staff::all();
 
         // Return the staff members as a JSON response
-        return response()->json($staff);
+                       return StaffResource::collection($staff);
     }
 
     /**
@@ -47,8 +48,10 @@ class StaffController extends Controller
         $staff = Staff::create($data);
 
         // Return a response
-        return response()->json(['message' => 'Staff member created successfully', 'staff' => $staff], 201);
-    }
+      return (new StaffResource($staff))
+            ->additional(['message' => 'Staff created successfully'])
+            ->response()
+            ->setStatusCode(201); }
 
     /**
      * Show the form for editing the specified resource.
@@ -65,7 +68,7 @@ class StaffController extends Controller
         }
 
         // Return the staff member as a JSON response
-        return response()->json($staff);
+          return new StaffResource($staff);
     }
     /**
      * Update the specified resource in storage.
@@ -91,14 +94,17 @@ class StaffController extends Controller
         $staff->update($data);
 
         // Return a response
-        return response()->json(['message' => 'Staff member updated successfully', 'staff' => $staff], 200);
-    }
+     
+         return (new StaffResource($staff))
+            ->additional(['message' => 'staff updated successfully']); }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
+       
+        // Find the staff member
         $staff = Staff::find($id);
         if (!$staff) {
             return response()->json(['message' => 'Staff member not found'], 404);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\report; 
+use App\Http\Resources\ReportResource;
 class ReportController extends Controller
 {
     /**
@@ -18,7 +19,8 @@ class ReportController extends Controller
         $reports = report::all();
 
         // Return the reports as a JSON response
-        return response()->json($reports);
+                       return ReportResource::collection($reports);
+
     }
 
     /**
@@ -47,8 +49,10 @@ class ReportController extends Controller
         $report = report::create($data);
 
         // Return a response
-        return response()->json(['message' => 'Report created successfully', 'report' => $report], 201);
-    }
+    return (new ReportResource($report))
+            ->additional(['message' => 'report created successfully'])
+            ->response()
+            ->setStatusCode(201);  }
 
     /**
      * Display the specified resource.
@@ -61,7 +65,7 @@ class ReportController extends Controller
         }
 
         // Return the report as a JSON response
-        return response()->json($report);
+          return new ReportResource($report);
     }
 
     /**
@@ -96,7 +100,9 @@ class ReportController extends Controller
         $report->update($data);
 
         // Return a response
-        return response()->json(['message' => 'Report updated successfully', 'report' => $report]);
+        
+         return (new ReportResource($report))
+            ->additional(['message' => 'report updated successfully']); 
     }
 
     /**

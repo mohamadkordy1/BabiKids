@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Progress; // Assuming you have a Payment model
+use App\Http\Resources\ProgressResource;
 class ProgressController extends Controller
 {
     /**
@@ -18,7 +19,8 @@ class ProgressController extends Controller
         $progressRecords = Progress::all();
 
         // Return the progress records as a JSON response
-        return response()->json($progressRecords);
+               return ProgressResource::collection($progressRecords);
+
     }
 
     /**
@@ -40,7 +42,7 @@ class ProgressController extends Controller
             'goal_title' => 'required|string|max:255',
             'start_date' => 'required|date',
             'target_date' => 'required|date',
-            'status' => 'required|in:ongoing,completed,not_started', //
+            'status' => 'required|in:ongoing,completed,7-7-2025', //
             'notes' => 'nullable|string'
         ]);
 
@@ -48,8 +50,10 @@ class ProgressController extends Controller
         $progress = Progress::create($data);
 
         // Return a response
-        return response()->json(['message' => 'Progress recorded successfully', 'progress' => $progress], 201);
-    }
+  return (new ProgressResource($progress))
+            ->additional(['message' => 'progress created successfully'])
+            ->response()
+            ->setStatusCode(201);    }
 
     /**
      * Display the specified resource.
@@ -62,7 +66,7 @@ class ProgressController extends Controller
         }
 
         // Return the progress as a JSON response
-        return response()->json($progress);
+          return new ProgressResource($progress);
     }
 
     /**
@@ -98,8 +102,9 @@ class ProgressController extends Controller
         $progress->update($data);
 
         // Return a response
-        return response()->json(['message' => 'Progress updated successfully', 'progress' => $progress]);
-    }
+      
+         return (new ProgressResource($progress))
+            ->additional(['message' => 'Activity updated successfully']);  }
 
     /**
      * Remove the specified resource from storage.

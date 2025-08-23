@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Activity; // Assuming you have an Activity model
+use App\Http\Resources\ActivityResource; // Assuming you have an ActivityResource for formatting responses
 class ActivityController extends Controller
 {
     /**
@@ -13,10 +14,11 @@ class ActivityController extends Controller
     public function index()
     {
         // Fetch all activities
-        $activities = Activity::all();
+        $Activities = Activity::all();
 
         // Return the activities as a JSON response
-        return response()->json($activities);
+                return ActivityResource::collection($Activities);
+
     }
 
     /**
@@ -37,7 +39,7 @@ class ActivityController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'date' => 'required|date',
+          
             'child_id' => 'required|exists:children,id', // Assuming you have a Child model
             'created_by' => 'required|exists:users,id', // Assuming you have a User model
 
@@ -47,7 +49,10 @@ class ActivityController extends Controller
         $activity = Activity::create($data);
 
         // Return a response
-        return response()->json(['message' => 'Activity created successfully', 'activity' => $activity], 201);
+      return (new ActivityResource($activity))
+            ->additional(['message' => 'activity created successfully'])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -61,8 +66,7 @@ class ActivityController extends Controller
             return response()->json(['message' => 'Activity not found'], 404);
         }
         // Return the activity as a JSON response
-        return response()->json($activities);
-    }
+ return new ActivityResource($activities);    }
 
     /**
      * Show the form for editing the specified resource.
@@ -87,7 +91,7 @@ class ActivityController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'date' => 'required|date',
+          
             'child_id' => 'required|exists:children,id', // Assuming you have a Child model
             'created_by' => 'required|exists:users,id', // Assuming you have a User model
         ]);
@@ -96,8 +100,8 @@ class ActivityController extends Controller
         $activity->update($data);
 
         // Return a response
-        return response()->json(['message' => 'Activity updated successfully', 'activity' => $activity], 200);
-      
+  return (new ActivityResource($activity))
+            ->additional(['message' => 'Activity updated successfully']);      
     }
 
     /**

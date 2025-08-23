@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Attendance; // Assuming you have an Attendance model
+use App\Http\Resources\AttendanceResource;
 
 class AttendanceController extends Controller
 {
@@ -17,7 +18,8 @@ class AttendanceController extends Controller
         $attendanceRecords = Attendance::all();
 
         // Return the attendance records as a JSON response
-        return response()->json($attendanceRecords);
+                return AttendanceResource::collection($attendanceRecords);
+
     }
 
     /**
@@ -48,7 +50,10 @@ class AttendanceController extends Controller
         $attendance = Attendance::create($data);
 
         // Return a response
-        return response()->json(['message' => 'Attendance recorded successfully', 'attendance' => $attendance], 201);
+      return (new AttendanceResource($attendance))
+            ->additional(['message' => 'attendance created successfully'])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -62,7 +67,7 @@ class AttendanceController extends Controller
         }
 
         // Return the attendance record as a JSON response
-        return response()->json($attendance);
+       return new AttendanceResource($attendance); 
     }
 
     /**
@@ -96,7 +101,8 @@ class AttendanceController extends Controller
         $attendance->update($data);
 
         // Return a response
-        return response()->json(['message' => 'Attendance updated successfully', 'attendance' => $attendance], 200);
+      return (new AttendanceResource($attendance))
+            ->additional(['message' => 'attendance updated successfully']);  
     }
 
     /**
