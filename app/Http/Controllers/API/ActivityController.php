@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Activity; // Assuming you have an Activity model
 use App\Http\Resources\ActivityResource; // Assuming you have an ActivityResource for formatting responses
+use App\Http\Requests\StoreActivityRequest;
+use App\Http\Requests\UpdateActivityRequest;
+
+
 class ActivityController extends Controller
 {
     /**
@@ -32,21 +36,14 @@ class ActivityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreActivityRequest $request)
     {
         
         // Validate the request data
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-          
-            'child_id' => 'required|exists:children,id', // Assuming you have a Child model
-            'created_by' => 'required|exists:users,id', // Assuming you have a User model
-
-        ]);
+       
 
         // Create a new activity
-        $activity = Activity::create($data);
+        $activity = Activity::create($request->validated());
 
         // Return a response
       return (new ActivityResource($activity))
@@ -79,7 +76,7 @@ class ActivityController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateActivityRequest $request, string $id)
     {
         // Find the activity
         $activity = Activity::find($id);
@@ -87,17 +84,10 @@ class ActivityController extends Controller
             return response()->json(['message' => 'Activity not found'], 404);
         }
 
-        // Validate the request data
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-          
-            'child_id' => 'required|exists:children,id', // Assuming you have a Child model
-            'created_by' => 'required|exists:users,id', // Assuming you have a User model
-        ]);
+        
 
         // Update the activity
-        $activity->update($data);
+        $activity->update($request->validated());
 
         // Return a response
   return (new ActivityResource($activity))

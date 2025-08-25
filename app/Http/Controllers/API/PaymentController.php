@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Payment; // Assuming you have a Payment model
 use App\Http\Resources\PaymentResource;
+use App\Http\Requests\StorePaymentRequest;
+use App\Http\Requests\UpdatePaymentRequest;
 
 class PaymentController extends Controller
 {
@@ -36,26 +38,17 @@ class PaymentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePaymentRequest $request)
     {
      
-        // Validate the request data
-        $data = $request->validate([
-            'amount' => 'required|numeric|min:0',
-            'parent_id' => 'required|exists:users,id', // Assuming you have a Child model
-            'payment_date' => 'required|date',
-            'payment_method' => 'required|string|max:255', // Assuming payment method is a string
-
-            'status' => 'required|in:paid,pending,failed', // Assuming status can be paid, pending, or failed
-        ]);        
-
+        
 
         // Create a new payment record
-        $payment = Payment::create($data);
+        $payment = Payment::create($request->validated());
 
         // Return a response
      return (new PaymentResource($payment))
-            ->additional(['message' => 'Child created successfully'])
+            ->additional(['message' => 'payments created successfully'])
             ->response()
             ->setStatusCode(201);
     }
@@ -85,17 +78,10 @@ class PaymentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdatePaymentRequest $request, string $id)
     {
         
-        // Validate the request data
-        $data = $request->validate([
-            'amount' => 'sometimes|required|numeric|min:0',
-            'parent_id' => 'sometimes|required|exists:users,id', // Assuming you have a Child model
-            'payment_date' => 'sometimes|required|date',
-            'payment_method' => 'sometimes|required|string|max:255', // Assuming payment method is a string
-            'status' => 'sometimes|required|in:paid,pending,failed', // Assuming status can be paid, pending, or failed
-        ]);
+       
 
         // Find the payment record
         $payment = Payment::find($id);
@@ -104,11 +90,11 @@ class PaymentController extends Controller
         }
 
         // Update the payment record
-        $payment->update($data);
+        $payment->update($request->validated());
 
         // Return a response
          return (new PaymentResource($payment))
-            ->additional(['message' => 'Activity updated successfully']);     
+            ->additional(['message' => 'payment updated successfully']);     
     }
 
     /**

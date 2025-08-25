@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Progress; // Assuming you have a Payment model
 use App\Http\Resources\ProgressResource;
+use App\Http\Requests\StoreProgressRequest;
+use App\Http\Requests\UpdateProgressRequest;
+
 class ProgressController extends Controller
 {
     /**
@@ -34,20 +37,12 @@ class ProgressController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProgressRequest $request)
     {
-        // Validate the request data
-        $data = $request->validate([
-            'child_id' => 'required|exists:children,id', // Assuming you have a Child model
-            'goal_title' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'target_date' => 'required|date',
-            'status' => 'required|in:ongoing,completed,7-7-2025', //
-            'notes' => 'nullable|string'
-        ]);
+       
 
         // Create a new progress record
-        $progress = Progress::create($data);
+        $progress = Progress::create($request->validated());
 
         // Return a response
   return (new ProgressResource($progress))
@@ -80,17 +75,9 @@ class ProgressController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateProgressRequest $request, string $id)
     {
-        // Validate the request data
-        $data = $request->validate([
-            'child_id' => 'required|exists:children,id', // Assuming you have a Child model
-            'goal_title' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'target_date' => 'required|date',
-            'status' => 'required|in:ongoing,completed,not_started', //
-            'notes' => 'nullable|string'
-        ]);
+       
 
         // Find the progress record
         $progress = Progress::find($id);
@@ -99,7 +86,7 @@ class ProgressController extends Controller
         }
 
         // Update the progress record
-        $progress->update($data);
+        $progress->update($request->validated());
 
         // Return a response
       

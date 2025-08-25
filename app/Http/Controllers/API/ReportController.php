@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\report; 
 use App\Http\Resources\ReportResource;
+use App\Http\Requests\StoreReportRequest;
+use App\Http\Requests\UpdateReportRequest;
+
 class ReportController extends Controller
 {
     /**
@@ -34,19 +37,12 @@ class ReportController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreReportRequest $request)
     {       
-        // Validate the request data
-        $data = $request->validate([
-            'child_id' => 'required|exists:children,id', // Assuming you have a Child model
-            'report_date' => 'required|date',
-            'report_type' => 'required|string|max:255',
-            'content' => 'required|string',
-            'created_by' => 'required|exists:users,id', // Assuming you have a User model
-        ]);
+      
 
         // Create a new report
-        $report = report::create($data);
+        $report = report::create($request->validated());
 
         // Return a response
     return (new ReportResource($report))
@@ -79,16 +75,9 @@ class ReportController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateReportRequest $request, string $id)
     {
-        // Validate the request data
-        $data = $request->validate([
-            'child_id' => 'required|exists:children,id', // Assuming you have a Child model
-            'report_date' => 'required|date',
-            'report_type' => 'required|string|max:255',
-            'content' => 'required|string',
-            'created_by' => 'required|exists:users,id', // Assuming you have a User model
-        ]);
+      
 
         // Find the report record
         $report = report::find($id);
@@ -97,7 +86,7 @@ class ReportController extends Controller
         }
 
         // Update the report record
-        $report->update($data);
+        $report->update($request->validated());
 
         // Return a response
         

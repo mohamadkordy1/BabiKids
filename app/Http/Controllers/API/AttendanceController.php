@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Attendance; // Assuming you have an Attendance model
 use App\Http\Resources\AttendanceResource;
+use App\Http\Requests\StoreAttendanceRequest;
+use App\Http\Requests\UpdateAttendanceRequest;
+
 
 class AttendanceController extends Controller
 {
@@ -33,21 +36,10 @@ class AttendanceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAttendanceRequest $request)
     {
-        // Validate the request data
-        $data = $request->validate([
-            'child_id' => 'required|exists:children,id', // Assuming you have a Child model
-            'date' => 'required|date',
-            'status' => 'required|in:present,absent', // Assuming status can be present or absent
-           
-            'check_in_time' => 'nullable|date_format:H:i',
-            'check_out_time' => 'nullable|date_format:H:i',
-            // Assuming you have a User model
-        ]);
-
         // Create a new attendance record
-        $attendance = Attendance::create($data);
+        $attendance = Attendance::create($request->validated());
 
         // Return a response
       return (new AttendanceResource($attendance))
@@ -81,16 +73,9 @@ class AttendanceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateAttendanceRequest $request, string $id)
     {
-        // Validate the request data
-        $data = $request->validate([
-            'child_id' => 'sometimes|exists:children,id',
-            'date' => 'sometimes|date',
-            'status' => 'sometimes|in:present,absent',
-            'created_by' => 'sometimes|exists:users,id',
-        ]);
-
+       
         // Find the attendance record
         $attendance = Attendance::find($id);
         if (!$attendance) {
@@ -98,7 +83,7 @@ class AttendanceController extends Controller
         }
 
         // Update the attendance record
-        $attendance->update($data);
+        $attendance->update($request->validated());
 
         // Return a response
       return (new AttendanceResource($attendance))

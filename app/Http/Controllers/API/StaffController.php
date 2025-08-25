@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Staff; // Assuming you have a Staff model
 use App\Models\User; // Assuming you have a User model
 use App\Http\Resources\StaffResource;
+use App\Http\Requests\StoreStaffRequest;
+use App\Http\Requests\UpdateStaffRequest;
 class StaffController extends Controller
 {
     /**
@@ -33,19 +35,12 @@ class StaffController extends Controller
      * Store a newly created resource in storage.
      */
 
-    public function store(Request $request)
+    public function store(StoreStaffRequest $request)
     {
 
-        // Validate the request data
-        $data = $request->validate([
-            'user_id' => 'required|exists:users,id', // Assuming you have a User model
-            'specialization' => 'nullable|string|max:255',
-            'bio' => 'nullable|string',
-            'hired_date' => 'required|date',
-        ]);
-
+       
         // Create a new staff member
-        $staff = Staff::create($data);
+        $staff = Staff::create($request->validated());
 
         // Return a response
       return (new StaffResource($staff))
@@ -73,16 +68,9 @@ class StaffController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateStaffRequest $request, string $id)
     {
-        
-        // Validate the request data
-        $data = $request->validate([
-            'user_id' => 'required|exists:users,id', // Assuming you have a User model
-            'specialization' => 'nullable|string|max:255',
-            'bio' => 'nullable|string',
-            'hired_date' => 'required|date',
-        ]);
+       
 
         // Find the staff member
         $staff = Staff::find($id);
@@ -91,7 +79,7 @@ class StaffController extends Controller
         }
 
         // Update the staff member
-        $staff->update($data);
+        $staff->update($request->validated());
 
         // Return a response
      

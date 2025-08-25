@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Child; // Assuming you have a Child model
 use App\Http\Resources\ChildResource; // Assuming you have a ChildResource for formatting responses
+use App\Http\Requests\StoreChildRequest;
+use App\Http\Requests\UpdateChildRequest;
+
+
 
 class ChildrenController extends Controller
 {
@@ -33,19 +37,14 @@ class ChildrenController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreChildRequest $request)
     {
         // Validate the request data
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'date_of_birth' => 'required|date',
-            'gender' => 'required',
-            'parent_id' => 'required|exists:users,id', // Assuming you have a Parent model
-        ]);
+       
         
 
         // Create a new child record
-        $child = Child::create($data);
+        $child = Child::create($request->validated());
 
         // Return a response
         return (new ChildResource($child))
@@ -56,9 +55,9 @@ class ChildrenController extends Controller
     
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
+
+
     public function show(string $id)
     {
         $child = Child::find($id);
@@ -70,25 +69,13 @@ class ChildrenController extends Controller
         return new ChildResource($child);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+    
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+
+    public function update(UpdateChildRequest $request, string $id)
     {
-        // Validate the request data
-        $data = $request->validate([
-           'name' => 'required|string|max:255',
-            'date_of_birth' => 'required|date',
-            'gender' => 'required',
-            'parent_id' => 'required|exists:users,id',]);
+       
 
         // Find the child record
         $child = Child::find($id);
@@ -97,16 +84,22 @@ class ChildrenController extends Controller
         }
 
         // Update the child record
-        $child->update($data);
+        $child->update($request->validated());
+
 
         // Return a response
+
+
+
         return (new ChildResource($child))
             ->additional(['message' => 'Child updated successfully']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
+
+
+
+
     public function destroy(string $id)
     {
         // Find the child record
