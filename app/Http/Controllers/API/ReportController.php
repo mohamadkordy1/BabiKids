@@ -8,90 +8,56 @@ use App\Models\report;
 use App\Http\Resources\ReportResource;
 use App\Http\Requests\StoreReportRequest;
 use App\Http\Requests\UpdateReportRequest;
+use App\Repositories\ReportRepository;
 
 class ReportController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public $reportRepository;
+    public function __construct(ReportRepository $reportRepository)
+    {
+        $this->reportRepository = $reportRepository;
+    } 
     public function index()
     {
-   
-        // This method should return a list of reports
-        // Assuming you have a Report model
-        $reports = report::all();
-
-        // Return the reports as a JSON response
-                       return ReportResource::collection($reports);
-
+       return ReportResource::collection($this->reportRepository->all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(StoreReportRequest $request)
     {       
-      
-
-        // Create a new report
-        $report = report::create($request->validated());
+        $report = $this->reportRepository->create($request->validated());
 
         // Return a response
-    return (new ReportResource($report))
-            ->additional(['message' => 'report created successfully'])
+      return (new ReportResource($report))
+            ->additional(['message' => 'Report created successfully'])
             ->response()
-            ->setStatusCode(201);  }
+            ->setStatusCode(201);
+    }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(string $id)
     {
-        $report = report::find($id);
+        $report = $this->reportRepository->find($id);
         if (!$report) {
             return response()->json(['message' => 'Report not found'], 404);
         }
-
-        // Return the report as a JSON response
-          return new ReportResource($report);
+        $Report = report::find($id);
+        return new ReportResource($Report);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateReportRequest $request, string $id)
     {
       
-
-        // Find the report record
-        $report = report::find($id);
+        $report = $this->reportRepository->find($id);
         if (!$report) {
             return response()->json(['message' => 'Report not found'], 404);
         }
 
-        // Update the report record
-        $report->update($request->validated());
-
-        // Return a response
-        
-         return (new ReportResource($report))
-            ->additional(['message' => 'report updated successfully']); 
+        $updatedReport = $this->reportRepository->update($id, $request->validated());
+        return (new ReportResource($updatedReport))
+            ->additional(['message' => 'Report updated successfully'])
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**
@@ -99,16 +65,13 @@ class ReportController extends Controller
      */
     public function destroy(string $id)
     {
-        // Find the report record
-        $report = report::find($id);
+        $report = $this->reportRepository->find($id);
         if (!$report) {
             return response()->json(['message' => 'Report not found'], 404);
         }
 
-        // Delete the report record
-        $report->delete();
+        $this->reportRepository->delete($id);
 
-        // Return a response
-        return response()->json(['message' => 'Report deleted successfully'], 200);
+        return response()->json(['message' => 'Report deleted successfully']);
     }
 }

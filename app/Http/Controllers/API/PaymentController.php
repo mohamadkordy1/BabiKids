@@ -8,47 +8,30 @@ use App\Models\Payment; // Assuming you have a Payment model
 use App\Http\Resources\PaymentResource;
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\UpdatePaymentRequest;
+use App\Repositories\PaymentRepository;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public $paymentRepository;
+    public function __construct(PaymentRepository $paymentRepository)
+    {
+        $this->paymentRepository = $paymentRepository;
+    }
+
     public function index()
     {
+       
+ return PaymentResource::collection($this->paymentRepository->all());
         
-        // This method should return a list of payments
-        // Assuming you have a Payment model
-         $payments = Payment::all();
-
-        // Return the payments as a JSON response
-        return PaymentResource::collection($payments);
-
-
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StorePaymentRequest $request)
     {
-     
-        
-
-        // Create a new payment record
-        $payment = Payment::create($request->validated());
+        $payment = $this->paymentRepository->create($request->validated());
 
         // Return a response
-     return (new PaymentResource($payment))
-            ->additional(['message' => 'payments created successfully'])
+  return (new PaymentResource($payment))
+            ->additional(['message' => 'payment created successfully'])
             ->response()
             ->setStatusCode(201);
     }
@@ -58,43 +41,27 @@ class PaymentController extends Controller
      */
     public function show(string $id)
     {
-        $payment = Payment::find($id);
+        $payment = $this->paymentRepository->find($id);
         if (!$payment) {
-            return response()->json(['message' => 'Payment record not found'], 404);
+            return response()->json(['message' => 'Payment not found'], 404);
         }
-
-        // Return the payment as a JSON response
-          return new PaymentResource($payment);
+        $Payment = Payment::find($id);
+        return new PaymentResource($Payment);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(UpdatePaymentRequest $request, string $id)
     {
-        
-       
-
-        // Find the payment record
-        $payment = Payment::find($id);
+        $payment = $this->paymentRepository->find($id);
         if (!$payment) {
-            return response()->json(['message' => 'Payment record not found'], 404);
+            return response()->json(['message' => 'Payment not found'], 404);
         }
 
-        // Update the payment record
-        $payment->update($request->validated());
+        $updatedPayment = $this->paymentRepository->update($id, $request->validated());
 
-        // Return a response
-         return (new PaymentResource($payment))
-            ->additional(['message' => 'payment updated successfully']);     
+        return (new PaymentResource($updatedPayment))
+            ->additional(['message' => 'Payment updated successfully'])
+            ;
     }
 
     /**
@@ -102,16 +69,13 @@ class PaymentController extends Controller
      */
     public function destroy(string $id)
     {
-        // Find the payment record
-        $payment = Payment::find($id);
+        $payment = $this->paymentRepository->find($id);
         if (!$payment) {
-            return response()->json(['message' => 'Payment record not found'], 404);
+            return response()->json(['message' => 'Payment not found'], 404);
         }
 
-        // Delete the payment record
-        $payment->delete();
+        $this->paymentRepository->delete($id);
 
-        // Return a response
-        return response()->json(['message' => 'Payment deleted successfully'], 200);
+        return response()->json(['message' => 'Payment deleted successfully']);
     }
 }

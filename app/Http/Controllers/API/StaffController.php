@@ -9,99 +9,71 @@ use App\Models\User; // Assuming you have a User model
 use App\Http\Resources\StaffResource;
 use App\Http\Requests\StoreStaffRequest;
 use App\Http\Requests\UpdateStaffRequest;
+use App\Repositories\StaffRepository;
+
 class StaffController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
+{public $staffRepository;
+
+    public function __construct(StaffRepository $staffRepository)
+    {
+        $this->staffRepository = $staffRepository;
+    }
+
+
     public function index()
     {
-        // Fetch all staff members
-        $staff = Staff::all();
+      return StaffResource::collection($this->staffRepository->all());}
 
-        // Return the staff members as a JSON response
-                       return StaffResource::collection($staff);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    
 
     public function store(StoreStaffRequest $request)
     {
-
-       
         // Create a new staff member
-        $staff = Staff::create($request->validated());
+        $staff = $this->staffRepository->create($request->validated());
 
         // Return a response
-      return (new StaffResource($staff))
-            ->additional(['message' => 'Staff created successfully'])
+       return (new StaffResource($staff))
+            ->additional(['message' => 'staff created successfully'])
             ->response()
-            ->setStatusCode(201); }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+            ->setStatusCode(201);
     }
+
+   
     public function show(string $id)
 {
-        $staff = Staff::find($id);
+        $staff = $this->staffRepository->find($id);
         if (!$staff) {
             return response()->json(['message' => 'Staff member not found'], 404);
         }
-
-        // Return the staff member as a JSON response
-          return new StaffResource($staff);
+        $Staff = Staff::find($id);
+        return new StaffResource($Staff);
     }
-    /**
-     * Update the specified resource in storage.
-     */
+
+
+
     public function update(UpdateStaffRequest $request, string $id)
     {
-       
-
-        // Find the staff member
-        $staff = Staff::find($id);
+        $staff = $this->staffRepository->find($id);
         if (!$staff) {
             return response()->json(['message' => 'Staff member not found'], 404);
         }
 
-        // Update the staff member
-        $staff->update($request->validated());
+        $updatedStaff = $this->staffRepository->update($id, $request->validated());
+        return (new StaffResource($updatedStaff))
+            ->additional(['message' => 'Staff member updated successfully'])
+            ->response()
+            ->setStatusCode(200);
+    }
 
-        // Return a response
-     
-         return (new StaffResource($staff))
-            ->additional(['message' => 'staff updated successfully']); }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-       
-        // Find the staff member
-        $staff = Staff::find($id);
+        $staff = $this->staffRepository->find($id);
         if (!$staff) {
             return response()->json(['message' => 'Staff member not found'], 404);
         }
 
-        // Delete the staff member
-        $staff->delete();
+        $this->staffRepository->delete($id);
 
-        // Return a response
         return response()->json(['message' => 'Staff member deleted successfully'], 200);
     }
 }
