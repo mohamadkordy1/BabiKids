@@ -16,6 +16,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::prefix('v1')->group(function () {
+
+
 route::post('/register', [AuthController::class, 'register']);
 route::post('/login', [AuthController::class, 'login']);
 route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -27,11 +30,11 @@ route::put('/activities/{id}',[ActivityController::class, 'update']);
 route::delete('/activities/{id}',[ActivityController::class, 'destroy']);
 
 
-route::get('/Attendance',[AttendanceController::class, 'index']);
-route::get('/Attendance/{id}',[AttendanceController::class, 'show']);
-route::post('/Attendance',[AttendanceController::class, 'store']);
-route::put('/Attendance/{id}',[AttendanceController::class, 'update']);
-route::delete('/Attendance/{id}',[AttendanceController::class, 'destroy']);
+route::get('/attendance',[AttendanceController::class, 'index']);
+route::get('/attendance/{id}',[AttendanceController::class, 'show']);
+route::post('/attendance',[AttendanceController::class, 'store']);
+route::put('/attendance/{id}',[AttendanceController::class, 'update']);
+route::delete('/attendance/{id}',[AttendanceController::class, 'destroy']);
 
 route::get('/children',[ChildrenController::class, 'index']);
 route::get('/children/{id}',[ChildrenController::class, 'show']);
@@ -39,27 +42,27 @@ route::post('/children',[ChildrenController::class, 'store']);
 route::put('/children/{id}',[ChildrenController::class, 'update']);
 route::delete('/children/{id}',[ChildrenController::class, 'destroy']);
 
-route::get('/Payment',[PaymentController::class, 'index']);
-route::get('/Payment/{id}',[PaymentController::class, 'show']);
-route::post('/Payment',[PaymentController::class, 'store']);
-route::put('/Payment/{id}',[PaymentController::class, 'update']);
-route::delete('/Payment/{id}',[PaymentController::class, 'destroy']);
+route::get('/payments',[PaymentController::class, 'index']);
+route::get('/payments/{id}',[PaymentController::class, 'show']);
+route::post('/payments',[PaymentController::class, 'store']);
+route::put('/payments/{id}',[PaymentController::class, 'update']);
+route::delete('/payments/{id}',[PaymentController::class, 'destroy']);
 
-route::get('/Progress',[ProgressController::class, 'index']);
-route::get('/Progress/{id}',[ProgressController::class, 'show']);
-route::post('/Progress',[ProgressController::class, 'store']);
-route::put('/Progress/{id}',[ProgressController::class, 'update']);
-route::delete('/Progress/{id}',[ProgressController::class, 'destroy']);
+route::get('/progresses',[ProgressController::class, 'index']);
+route::get('/progresses/{id}',[ProgressController::class, 'show']);
+route::post('/progresses',[ProgressController::class, 'store']);
+route::put('/progresses/{id}',[ProgressController::class, 'update']);
+route::delete('/progresses/{id}',[ProgressController::class, 'destroy']);
 
-route::get('/Report',[ReportController::class, 'index']);
-route::get('/Report/{id}',[ReportController::class, 'show']);
-route::post('/Report',[ReportController::class, 'store']);
-route::put('/Report/{id}',[ReportController::class, 'update']);
-route::delete('/Report/{id}',[ReportController::class, 'destroy']);
+route::get('/reports',[ReportController::class, 'index']);
+route::get('/reports/{id}',[ReportController::class, 'show']);
+route::post('/reports',[ReportController::class, 'store']);
+route::put('/reports/{id}',[ReportController::class, 'update']);
+route::delete('/reports/{id}',[ReportController::class, 'destroy']);
 
-route::get('/Staff',[StaffController::class, 'index']);
-route::get('/Staff/{id}',[StaffController::class, 'show']);
-route::post('/Staff',[StaffController::class, 'store']);
-route::put('/Staff/{id}',[StaffController::class, 'update']);
-route::delete('/Staff/{id}',[StaffController::class, 'destroy']);
-
+route::get('/staff',[StaffController::class, 'index']);
+route::get('/staff/{id}',[StaffController::class, 'show']);
+route::post('/staff',[StaffController::class, 'store']);
+route::put('/staff/{id}',[StaffController::class, 'update']);
+route::delete('/staff/{id}',[StaffController::class, 'destroy']);
+});
