@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,14 +12,21 @@ return new class extends Migration
     {
         Schema::create('progress', function (Blueprint $table) {
             $table->id();
-            
-        $table->foreignId('child_id')->constrained('children')->onDelete('cascade');
-        $table->string('goal_title');
-        $table->date('start_date');
-        $table->date('target_date');
-        $table->enum('status', ['completed', 'in-progress']);
-        $table->text('notes')->nullable();
+
+            $table->foreignId('child_id')->constrained('children')->onDelete('cascade');
+            $table->string('goal_title');
+            $table->date('start_date');
+            $table->date('target_date');
+            $table->enum('status', ['completed', 'in-progress']);
+            $table->text('notes')->nullable();
             $table->timestamps();
+
+            $table->index('child_id');     // faster joins with children
+            $table->index('status');       // filtering by status
+            $table->index('start_date');   // queries by start date
+            $table->index('target_date');
+
+            $table->softDeletes();
         });
     }
 

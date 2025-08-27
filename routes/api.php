@@ -10,7 +10,7 @@ use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\ProgressController;
 use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\StaffController;
-
+use App\Http\Controllers\API\UserController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -65,4 +65,12 @@ route::get('/staff/{id}',[StaffController::class, 'show']);
 route::post('/staff',[StaffController::class, 'store']);
 route::put('/staff/{id}',[StaffController::class, 'update']);
 route::delete('/staff/{id}',[StaffController::class, 'destroy']);
+
+route::get('/users',[UserController::class, 'index']);
+route::get('/users/{id}',[UserController::class, 'show']);
+route::post('/users',[UserController::class, 'store']);
+route::put('/users/{id}',[UserController::class, 'update']);
+route::delete('/users/{id}',[UserController::class, 'destroy'] );
+
+
 });
