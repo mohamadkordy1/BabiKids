@@ -8,7 +8,7 @@ use App\Models\Attendance; // Assuming you have an Attendance model
 use App\Http\Resources\AttendanceResource;
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
-
+use App\Repositories\AttendanceRepository;
 
 class AttendanceController extends Controller
 {
@@ -21,7 +21,7 @@ class AttendanceController extends Controller
         $attendanceRecords = Attendance::all();
 
         // Return the attendance records as a JSON response
-                return AttendanceResource::collection($attendanceRecords);
+        return AttendanceResource::collection($attendanceRecords);
 
     }
 
@@ -30,7 +30,7 @@ class AttendanceController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -42,7 +42,7 @@ class AttendanceController extends Controller
         $attendance = Attendance::create($request->validated());
 
         // Return a response
-      return (new AttendanceResource($attendance))
+        return (new AttendanceResource($attendance))
             ->additional(['message' => 'attendance created successfully'])
             ->response()
             ->setStatusCode(201);
@@ -59,7 +59,7 @@ class AttendanceController extends Controller
         }
 
         // Return the attendance record as a JSON response
-       return new AttendanceResource($attendance); 
+        return new AttendanceResource($attendance);
     }
 
     /**
@@ -75,7 +75,7 @@ class AttendanceController extends Controller
      */
     public function update(UpdateAttendanceRequest $request, string $id)
     {
-       
+
         // Find the attendance record
         $attendance = Attendance::find($id);
         if (!$attendance) {
@@ -86,8 +86,8 @@ class AttendanceController extends Controller
         $attendance->update($request->validated());
 
         // Return a response
-      return (new AttendanceResource($attendance))
-            ->additional(['message' => 'attendance updated successfully']);  
+        return (new AttendanceResource($attendance))
+            ->additional(['message' => 'attendance updated successfully']);
     }
 
     /**

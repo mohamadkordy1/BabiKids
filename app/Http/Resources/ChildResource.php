@@ -6,16 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\Child;
 use App\Http\controllers\API\ChildrenController;
+
 class ChildResource extends JsonResource
 {
 public static $wrap = 'child'; // Wrap the resource in a 'child' key
       
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
    return [

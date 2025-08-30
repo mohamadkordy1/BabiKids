@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ActivityController;
 use App\Http\Controllers\API\AttendanceController;
@@ -12,65 +13,114 @@ use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\StaffController;
 use App\Http\Controllers\API\UserController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
+// Public routes
 Route::prefix('v1')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+});
 
+// Protected routes (requires authentication)
+Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
 
-route::post('/register', [AuthController::class, 'register']);
-route::post('/login', [AuthController::class, 'login']);
-route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    // Current authenticated user
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
-route::get('/activities',[ActivityController::class, 'index']);
-route::get('/activities/{id}',[ActivityController::class, 'show']);
-route::post('/activities',[ActivityController::class, 'store']);
-route::put('/activities/{id}',[ActivityController::class, 'update']);
-route::delete('/activities/{id}',[ActivityController::class, 'destroy']);
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout']);
 
+    // Activities
+    Route::middleware([RoleMiddleware::class . ':admin,teacher,parent'])->group(function () {
+        Route::get('/activities', [ActivityController::class, 'index']);
+        Route::get('/activities/{id}', [ActivityController::class, 'show']);
+    });
+    Route::middleware([RoleMiddleware::class . ':admin,teacher'])->group(function () {
+        Route::post('/activities', [ActivityController::class, 'store']);
+        Route::put('/activities/{id}', [ActivityController::class, 'update']);
+    });
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::delete('/activities/{id}', [ActivityController::class, 'destroy']);
+    });
 
-route::get('/attendance',[AttendanceController::class, 'index']);
-route::get('/attendance/{id}',[AttendanceController::class, 'show']);
-route::post('/attendance',[AttendanceController::class, 'store']);
-route::put('/attendance/{id}',[AttendanceController::class, 'update']);
-route::delete('/attendance/{id}',[AttendanceController::class, 'destroy']);
+    // Attendance
+    Route::middleware([RoleMiddleware::class . ':admin,teacher,parent'])->group(function () {
+        Route::get('/attendance', [AttendanceController::class, 'index']);
+        Route::get('/attendance/{id}', [AttendanceController::class, 'show']);
+    });
+    Route::middleware([RoleMiddleware::class . ':admin,teacher'])->group(function () {
+        Route::post('/attendance', [AttendanceController::class, 'store']);
+        Route::put('/attendance/{id}', [AttendanceController::class, 'update']);
+    });
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::delete('/attendance/{id}', [AttendanceController::class, 'destroy']);
+    });
 
-route::get('/children',[ChildrenController::class, 'index']);
-route::get('/children/{id}',[ChildrenController::class, 'show']);
-route::post('/children',[ChildrenController::class, 'store']);
-route::put('/children/{id}',[ChildrenController::class, 'update']);
-route::delete('/children/{id}',[ChildrenController::class, 'destroy']);
+    // Children
+    Route::middleware([RoleMiddleware::class . ':admin,teacher,parent'])->group(function () {
+        Route::get('/children', [ChildrenController::class, 'index']);
+        Route::get('/children/{id}', [ChildrenController::class, 'show']);
+    });
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::post('/children', [ChildrenController::class, 'store']);
+        Route::put('/children/{id}', [ChildrenController::class, 'update']);
+        Route::delete('/children/{id}', [ChildrenController::class, 'destroy']);
+    });
 
-route::get('/payments',[PaymentController::class, 'index']);
-route::get('/payments/{id}',[PaymentController::class, 'show']);
-route::post('/payments',[PaymentController::class, 'store']);
-route::put('/payments/{id}',[PaymentController::class, 'update']);
-route::delete('/payments/{id}',[PaymentController::class, 'destroy']);
+    // Payments
+    Route::middleware([RoleMiddleware::class . ':admin,parent'])->group(function () {
+        Route::get('/payments', [PaymentController::class, 'index']);
+        Route::get('/payments/{id}', [PaymentController::class, 'show']);
+    });
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::post('/payments', [PaymentController::class, 'store']);
+        Route::put('/payments/{id}', [PaymentController::class, 'update']);
+        Route::delete('/payments/{id}', [PaymentController::class, 'destroy']);
+    });
 
-route::get('/progresses',[ProgressController::class, 'index']);
-route::get('/progresses/{id}',[ProgressController::class, 'show']);
-route::post('/progresses',[ProgressController::class, 'store']);
-route::put('/progresses/{id}',[ProgressController::class, 'update']);
-route::delete('/progresses/{id}',[ProgressController::class, 'destroy']);
+    // Progress
+    Route::middleware([RoleMiddleware::class . ':admin,teacher,parent'])->group(function () {
+        Route::get('/progresses', [ProgressController::class, 'index']);
+        Route::get('/progresses/{id}', [ProgressController::class, 'show']);
+    });
+    Route::middleware([RoleMiddleware::class . ':admin,teacher'])->group(function () {
+        Route::post('/progresses', [ProgressController::class, 'store']);
+        Route::put('/progresses/{id}', [ProgressController::class, 'update']);
+    });
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::delete('/progresses/{id}', [ProgressController::class, 'destroy']);
+    });
 
-route::get('/reports',[ReportController::class, 'index']);
-route::get('/reports/{id}',[ReportController::class, 'show']);
-route::post('/reports',[ReportController::class, 'store']);
-route::put('/reports/{id}',[ReportController::class, 'update']);
-route::delete('/reports/{id}',[ReportController::class, 'destroy']);
+    // Reports
+    Route::middleware([RoleMiddleware::class . ':admin,teacher,parent'])->group(function () {
+        Route::get('/reports', [ReportController::class, 'index']);
+        Route::get('/reports/{id}', [ReportController::class, 'show']);
+    });
+    Route::middleware([RoleMiddleware::class . ':admin,teacher'])->group(function () {
+        Route::post('/reports', [ReportController::class, 'store']);
+        Route::put('/reports/{id}', [ReportController::class, 'update']);
+    });
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::delete('/reports/{id}', [ReportController::class, 'destroy']);
+    });
 
-route::get('/staff',[StaffController::class, 'index']);
-route::get('/staff/{id}',[StaffController::class, 'show']);
-route::post('/staff',[StaffController::class, 'store']);
-route::put('/staff/{id}',[StaffController::class, 'update']);
-route::delete('/staff/{id}',[StaffController::class, 'destroy']);
+    // Staff (admin only)
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::get('/staff', [StaffController::class, 'index']);
+        Route::get('/staff/{id}', [StaffController::class, 'show']);
+        Route::post('/staff', [StaffController::class, 'store']);
+        Route::put('/staff/{id}', [StaffController::class, 'update']);
+        Route::delete('/staff/{id}', [StaffController::class, 'destroy']);
+    });
 
-route::get('/users',[UserController::class, 'index']);
-route::get('/users/{id}',[UserController::class, 'show']);
-route::post('/users',[UserController::class, 'store']);
-route::put('/users/{id}',[UserController::class, 'update']);
-route::delete('/users/{id}',[UserController::class, 'destroy'] );
-
+    // Users (admin only)
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::get('/users', [UserController::class, 'index']);
+        Route::get('/users/{id}', [UserController::class, 'show']);
+        Route::post('/users', [UserController::class, 'store']);
+        Route::put('/users/{id}', [UserController::class, 'update']);
+        Route::delete('/users/{id}', [UserController::class, 'destroy']);
+    });
 
 });

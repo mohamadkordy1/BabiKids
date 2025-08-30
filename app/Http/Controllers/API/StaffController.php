@@ -12,7 +12,10 @@ use App\Http\Requests\UpdateStaffRequest;
 use App\Repositories\StaffRepository;
 
 class StaffController extends Controller
-{public $staffRepository;
+
+{
+    
+    public $staffRepository;
 
     public function __construct(StaffRepository $staffRepository)
     {

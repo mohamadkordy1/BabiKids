@@ -31,6 +31,7 @@ class ActivityController extends Controller
     }
 
 
+
     public function store(StoreActivityRequest $request)
     {
         $activity = $this->activityRepository->create($request->validated());
@@ -42,6 +43,7 @@ class ActivityController extends Controller
     }
 
 
+
     public function show(string $id)
     {
         $activity = $this->activityRepository->find($id);
@@ -50,8 +52,8 @@ class ActivityController extends Controller
         }
         $Activity = Activity::find($id);
         return new ActivityResource($Activity);
-
 }
+
 
     
     public function update(UpdateActivityRequest $request, string $id)
@@ -61,22 +63,21 @@ class ActivityController extends Controller
             return response()->json(['message' => 'Activity not found'], 404);
         }
 
-        // Update the activity with validated data
         $activity=$this->activityRepository->update($id, $request->validated());
 
-        // Return a response
        return (new ActivityResource($activity))
             ->additional(['message' => 'Activity updated successfully'])
             ->response()
             ->setStatusCode(200);
       }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
+
+
+
+
     public function destroy(string $id)
     {
-       
         $activity = $this->activityRepository->find($id);
         if (!$activity) {
             return response()->json(['message' => 'Activity not found'], 404);
