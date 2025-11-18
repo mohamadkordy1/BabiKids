@@ -13,6 +13,9 @@ use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\StaffController;
 use App\Http\Controllers\API\UserController;
 
+use App\Http\Controllers\API\ClassroomController;
+
+
 // Public routes
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -57,11 +60,19 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
         Route::delete('/attendance/{id}', [AttendanceController::class, 'destroy']);
     });
 
+
+    
+
     // Children
     Route::middleware([RoleMiddleware::class . ':admin,teacher,parent'])->group(function () {
         Route::get('/children', [ChildrenController::class, 'index']);
         Route::get('/children/{id}', [ChildrenController::class, 'show']);
-    });
+   Route::get('/children/{id}/classrooms', [ChildrenController::class, 'classrooms']);
+ });
+
+
+
+
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         Route::post('/children', [ChildrenController::class, 'store']);
         Route::put('/children/{id}', [ChildrenController::class, 'update']);
@@ -122,5 +133,18 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
         Route::put('/users/{id}', [UserController::class, 'update']);
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
     });
+
+  Route::get('/classrooms', [ClassroomController::class, 'index']);          // List all classrooms
+    Route::get('/classrooms/{id}', [ClassroomController::class, 'show']);      // Show single classroom
+    Route::post('/classrooms', [ClassroomController::class, 'store']);         // Create a classroom
+    Route::put('/classrooms/{id}', [ClassroomController::class, 'update']);    // Update classroom
+    Route::delete('/classrooms/{id}', [ClassroomController::class, 'destroy']); // Delete classroom
+
+    // Manage children in classroom (pivot table)
+    Route::post('/classrooms/{id}/add-children', [ClassroomController::class, 'addChildren']);       // Attach children
+    Route::post('/classrooms/{id}/remove-children', [ClassroomController::class, 'removeChildren']); // Detach children
+    Route::get('/classrooms/{id}/children', [ClassroomController::class, 'listChildren']);           // List children
+
+
 
 });

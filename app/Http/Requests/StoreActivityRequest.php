@@ -25,7 +25,7 @@ class StoreActivityRequest extends FormRequest
            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
           
-            'child_id' => 'required|exists:children,id', // Assuming you have a Child model
+            'classroom_id' => 'required|exists:classrooms,id', // Assuming you have a Child model
             'created_by' => 'required|exists:users,id',
         ];
     }

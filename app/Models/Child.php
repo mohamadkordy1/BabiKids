@@ -43,4 +43,12 @@ class Child extends Model
     {
         return $this->hasMany(Report::class, 'child_id');
     }
+
+ public function classrooms()
+{
+    return $this->belongsToMany(Classroom::class, 'child_class', 'child_id', 'classroom_id');
+}
+
+
+
 }
