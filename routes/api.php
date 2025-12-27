@@ -42,10 +42,9 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':admin,teacher'])->group(function () {
         Route::post('/activities', [ActivityController::class, 'store']);
         Route::put('/activities/{id}', [ActivityController::class, 'update']);
+         Route::delete('/activities/{id}', [ActivityController::class, 'destroy']);
     });
-    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
-        Route::delete('/activities/{id}', [ActivityController::class, 'destroy']);
-    });
+    
 
     // Attendance
     Route::middleware([RoleMiddleware::class . ':admin,teacher,parent'])->group(function () {
@@ -99,7 +98,7 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
         Route::post('/progresses', [ProgressController::class, 'store']);
         Route::put('/progresses/{id}', [ProgressController::class, 'update']);
     });
-    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+    Route::middleware([RoleMiddleware::class . ':admin,teacher'])->group(function () {
         Route::delete('/progresses/{id}', [ProgressController::class, 'destroy']);
     });
 

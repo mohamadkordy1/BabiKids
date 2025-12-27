@@ -104,7 +104,7 @@ class ClassroomController extends Controller
 
         return response()->json([
             'classroom' => $classroom->name,
-            'children' => $classroom->children->pluck('name'),
+            'children' => $classroom->children,
         ]);
     }
 }

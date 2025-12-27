@@ -11,7 +11,8 @@ class Progress extends Model
     use HasFactory;
 
     protected $fillable = [
-        'child_id',
+       
+        'classroom_id',
         'goal_title',
         'start_date',
         'target_date',
@@ -19,8 +20,9 @@ class Progress extends Model
         'notes'
     ];
 
-    public function child()
+
+    public function classroom()
     {
-        return $this->belongsTo(Child::class, 'child_id');
+        return $this->belongsTo(classroom::class, 'classroom_id');
     }
 }

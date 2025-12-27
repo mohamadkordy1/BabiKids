@@ -23,6 +23,7 @@ class UpdateAttendanceRequest extends FormRequest
     {
         return [
              'child_id' => 'required|exists:children,id', // Assuming you have a Child model
+             'classroom_id' => 'required|exists:classrooms,id', // Assuming you have a Child model
             'date' => 'required|date',
             'status' => 'required|in:present,absent', // Assuming status can be present or absent
             'created_by' => 'sometimes|exists:users,id',

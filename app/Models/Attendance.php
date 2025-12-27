@@ -16,11 +16,16 @@ class Attendance extends Model
         'date',
         'status',
         'check_in_time',
-        'check_out_time'
+        'check_out_time',
+        'classroom_id'
     ];
 
     public function child()
     {
         return $this->belongsTo(Child::class, 'child_id');
+    }
+    public function classroom()
+    {
+        return $this->belongsTo(classroom::class, 'classroom_id');
     }
 }

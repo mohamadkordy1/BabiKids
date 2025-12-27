@@ -22,7 +22,8 @@ class UpdateProgressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'child_id' => 'required|exists:children,id', // Assuming you have a Child model
+           
+            'classroom_id' => 'required|exists:classrooms,id', // Assuming you have a Classroom model
             'goal_title' => 'required|string|max:255',
             'start_date' => 'required|date',
             'target_date' => 'required|date',
