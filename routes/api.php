@@ -126,7 +126,7 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     });
 
     // Users (admin only)
-    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+    Route::middleware([RoleMiddleware::class . ':admin,teacher,parent'])->group(function () {
         Route::get('/users', [UserController::class, 'index']);
         Route::get('/users/{id}', [UserController::class, 'show']);
         Route::post('/users', [UserController::class, 'store']);

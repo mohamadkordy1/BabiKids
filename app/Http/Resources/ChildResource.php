@@ -18,5 +18,8 @@ public static $wrap = 'child'; // Wrap the resource in a 'child' key
             'id' => $this->id,
             'name' => $this->name,
             'gender' => $this->gender,
-            'date_of_birth' => $this->date_of_birth,]  ;  }
+            'date_of_birth' => $this->date_of_birth,
+            'parent_id' => $this->parent_id,
+            
+            ]  ;  }
 }

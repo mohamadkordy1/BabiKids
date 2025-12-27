@@ -14,6 +14,7 @@ class AuthController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'PhoneNumber' => 'required|string|max:20',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|string|in:parent,teacher,admin',
         ]);
@@ -21,12 +22,13 @@ class AuthController extends Controller
         $user = \App\Models\User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'PhoneNumber' => $data['PhoneNumber'],
             'password' => bcrypt($data['password']),
             'role' => $data['role'],
         ]);
 
         // Create access token (expires in 15 minutes)
-        $accessToken = $user->createToken('Token', ['*'], now()->addMinutes(15))->plainTextToken;
+        $accessToken = $user->createToken('Token', ['*'], now()->addMinutes(120))->plainTextToken;
 
         // Create refresh token (valid for 7 days)
         $refreshToken = Str::random(64);
