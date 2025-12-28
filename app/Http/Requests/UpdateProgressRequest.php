@@ -27,7 +27,7 @@ class UpdateProgressRequest extends FormRequest
             'goal_title' => 'required|string|max:255',
             'start_date' => 'required|date',
             'target_date' => 'required|date',
-            'status' => 'required|in:ongoing,completed,not_started', //
+            'status' => 'required|in:in-progress,completed,', //
             'notes' => 'nullable|string',
         ];
     }
