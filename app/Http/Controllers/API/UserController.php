@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\API;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\ChangePasswordRequest;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -84,4 +86,30 @@ class UserController extends Controller
         
 
     }
+
+public function changePassword(ChangePasswordRequest $request)
+{
+    $user = $request->user();
+
+    if (!Hash::check($request->current_password, $user->password)) {
+        return response()->json([
+            'message' => 'Current password is incorrect'
+        ], 422);
+    }
+
+    if (Hash::check($request->new_password, $user->password)) {
+        return response()->json([
+            'message' => 'New password must be different from current password'
+        ], 422);
+    }
+
+    $user->password = $request->new_password;
+    $user->save();
+
+    return response()->json([
+        'message' => 'Password changed successfully'
+    ], 200);
+}
+
+
 }
