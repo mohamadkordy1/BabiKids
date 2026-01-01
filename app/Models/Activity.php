@@ -14,7 +14,7 @@ class Activity extends Model
     protected $fillable = [
         'title',
         'description',
-        'child_id',
+        'classroom_id',
         'created_by',
     ];
 
@@ -27,5 +27,12 @@ class Activity extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class, 'classroom_id');
+    }
+
+
 }
 

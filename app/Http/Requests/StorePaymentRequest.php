@@ -26,7 +26,7 @@ class StorePaymentRequest extends FormRequest
             'parent_id' => 'sometimes|required|exists:users,id', // Assuming you have a Child model
             'payment_date' => 'sometimes|required|date',
             'payment_method' => 'sometimes|required|string|max:255', // Assuming payment method is a string
-            'status' => 'sometimes|required|in:paid,pending,failed',
+            'status' => 'sometimes|required|in:paid,pending,overdue',
         ];
     }
 }

@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('attendance', function (Blueprint $table) {
             $table->id();
             $table->foreignId('child_id')->constrained('children')->onDelete('cascade');
+            $table->foreignId('classroom_id')->constrained('classrooms')->onDelete('cascade');
             $table->date('date');
             $table->enum('status', ['present', 'absent', 'late']);
             $table->time('check_in_time')->nullable();
@@ -21,6 +22,8 @@ return new class extends Migration {
 
 
             $table->index('child_id'); // fast lookups for a child's attendance
+            $table->index('classroom_id'); // fast lookups for a child's attendance
+           
             $table->index('date');     // fast filtering by date (e.g. daily reports)
             $table->index('status');
             $table->softDeletes();

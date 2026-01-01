@@ -16,7 +16,8 @@ class ProgressResource extends JsonResource
     {       
     return [        
                     'id' => $this->id,
-                    'child_id' => $this->child_id,
+                    
+                    'classroom_id' => $this->classroom_id,
                     'goal_title' => $this->goal_title,
                     'start_date' => $this->start_date,
                     'target_date' => $this->target_date,

@@ -22,11 +22,12 @@ class StoreProgressRequest extends FormRequest
     public function rules(): array
     {
         return [
-          'child_id' => 'required|exists:children,id', // Assuming you have a Child model
+         
+            'classroom_id' => 'required|exists:classrooms,id', // Assuming you have a Classroom model
             'goal_title' => 'required|string|max:255',
             'start_date' => 'required|date',
             'target_date' => 'required|date',
-            'status' => 'required|in:ongoing,completed,7-7-2025', //
+            'status' => 'required|in:in-progress,completed,', //
             'notes' => 'nullable|string'
         ];
     }

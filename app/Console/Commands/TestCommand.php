@@ -34,8 +34,9 @@ class TestCommand extends Command
     {
 
         // Example of using the User model
- $children = staff::all();
- dd($children);
+ $children = Child::where('name','maroooo')->get()->first();
+ $this->info('Child Name: ' . $children->name);
+ dd($children->activities);
         // Example of using the Children model
     }
 }

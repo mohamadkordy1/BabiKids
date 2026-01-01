@@ -10,15 +10,11 @@ class UserRepository
         return User::all();
     }
 
-    public function find($id)
-    {
-        $User = User::find($id);
-         if (!$User) {
-            return false;
-        }
-        return true;
-        
-    }
+public function find($id)
+{
+    return User::find($id); // returns User|null
+}
+
 
     public function create(array $data)
     {

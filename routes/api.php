@@ -12,6 +12,7 @@ use App\Http\Controllers\API\ProgressController;
 use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\StaffController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\ClassroomController;
 
 // Public routes
 Route::prefix('v1')->group(function () {
@@ -22,6 +23,10 @@ Route::prefix('v1')->group(function () {
 
 // Protected routes (requires authentication)
 Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
+
+    // Change own password
+    Route::put('/users/change-password', [UserController::class, 'changePassword'])
+        ->middleware(RoleMiddleware::class . ':admin,teacher,parent');
 
     // Current authenticated user
     Route::get('/user', function (Request $request) {
@@ -39,8 +44,6 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':admin,teacher'])->group(function () {
         Route::post('/activities', [ActivityController::class, 'store']);
         Route::put('/activities/{id}', [ActivityController::class, 'update']);
-    });
-    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         Route::delete('/activities/{id}', [ActivityController::class, 'destroy']);
     });
 
@@ -61,6 +64,7 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':admin,teacher,parent'])->group(function () {
         Route::get('/children', [ChildrenController::class, 'index']);
         Route::get('/children/{id}', [ChildrenController::class, 'show']);
+        Route::get('/children/{id}/classrooms', [ChildrenController::class, 'classrooms']);
     });
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         Route::post('/children', [ChildrenController::class, 'store']);
@@ -87,8 +91,6 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':admin,teacher'])->group(function () {
         Route::post('/progresses', [ProgressController::class, 'store']);
         Route::put('/progresses/{id}', [ProgressController::class, 'update']);
-    });
-    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         Route::delete('/progresses/{id}', [ProgressController::class, 'destroy']);
     });
 
@@ -100,8 +102,6 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':admin,teacher'])->group(function () {
         Route::post('/reports', [ReportController::class, 'store']);
         Route::put('/reports/{id}', [ReportController::class, 'update']);
-    });
-    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         Route::delete('/reports/{id}', [ReportController::class, 'destroy']);
     });
 
@@ -114,8 +114,8 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
         Route::delete('/staff/{id}', [StaffController::class, 'destroy']);
     });
 
-    // Users (admin only)
-    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+    // Users
+    Route::middleware([RoleMiddleware::class . ':admin,teacher,parent'])->group(function () {
         Route::get('/users', [UserController::class, 'index']);
         Route::get('/users/{id}', [UserController::class, 'show']);
         Route::post('/users', [UserController::class, 'store']);
@@ -123,4 +123,15 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
     });
 
+    // Classrooms
+    Route::get('/classrooms', [ClassroomController::class, 'index']);
+    Route::get('/classrooms/{id}', [ClassroomController::class, 'show']);
+    Route::post('/classrooms', [ClassroomController::class, 'store']);
+    Route::put('/classrooms/{id}', [ClassroomController::class, 'update']);
+    Route::delete('/classrooms/{id}', [ClassroomController::class, 'destroy']);
+
+    // Manage children in classroom
+    Route::post('/classrooms/{id}/add-children', [ClassroomController::class, 'addChildren']);
+    Route::post('/classrooms/{id}/remove-children', [ClassroomController::class, 'removeChildren']);
+    Route::get('/classrooms/{id}/children', [ClassroomController::class, 'listChildren']);
 });

@@ -21,6 +21,6 @@ class ActivityResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'created_by' => $this->created_by,
-            'child_id' => $this->child_id,
+            'classroom_id' => $this->classroom_id,
             ]  ;    }
 }

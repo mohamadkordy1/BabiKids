@@ -94,4 +94,21 @@ $this->childRepository->delete($id);
         // Return a response
         return response()->json(['message' => 'Child deleted successfully'], 200);
     }
+
+
+        public function classrooms($childId)
+{
+    $child = Child::find($childId);
+
+    if (!$child) {
+        return response()->json([
+            'message' => 'Child not found'
+        ], 404);
+    }
+
+    return response()->json([
+        'child' => $child->name,
+        'classrooms' => $child->classrooms,   // fetch classrooms using pivot table
+    ], 200);
+}
 }
